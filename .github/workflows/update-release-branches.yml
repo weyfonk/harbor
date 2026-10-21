@@ -27,7 +27,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.GH_PAT }} # TODO add token to repo
 
       - name: Configure git
         run: |
