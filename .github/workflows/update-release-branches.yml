@@ -50,6 +50,8 @@ jobs:
             branches+=("$branch")
           done < <(git ls-remote --refs upstream 'refs/heads/release-*' | cut -f2 | sed 's|refs/heads/||' | sort -V)
 
+          echo "Found ${#branches[@]} release branches"
+
           if [ ${#branches[@]} -eq 0 ]; then
             echo "No release branches found upstream"
             echo "branches_json=" >> "$GITHUB_OUTPUT"
@@ -59,7 +61,6 @@ jobs:
           # Convert to JSON array
           json=$(printf '%s\n' "${branches[@]}" | jq -R . | jq -s . | tr -d '\n' | tr -d '[:space:]')
           echo "branches_json=$json" >> "$GITHUB_OUTPUT"
-          echo "Found ${#branches[@]} release branches"
 
       - name: Filter branches (if specified via input)
         if: ${{ github.event.inputs.target_branches }} != ''
@@ -81,7 +82,7 @@ jobs:
         run: |
           branches_json="$BRANCHES_JSON"
           
-          if [ -n "$FILTERED_JSON" ]; then
+          if [ "$FILTERED_JSON" != "[]" ]; then
             branches_json="$FILTERED_JSON"
           fi
 
